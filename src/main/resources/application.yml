@@ -1,0 +1,35 @@
+logging:
+  level:
+    com.kroger: DEBUG
+    org.springframework: ERROR
+    com.zaxxer.hikari: DEBUG
+    com.zaxxer.hikari.HikariConfig: ERROR
+spring:
+  batch:
+    jdbc:
+      initialize-schema: never
+    chunk-size: 10
+    job:
+      enabled: false
+  application:
+    name: magicdatareader
+  datasource:
+    url: ${yugabyte-pgsql-prcdlv-db-url}
+    username: ${yugabyte-pgsql-prcdlv-db-username}
+    password: ${yugabyte-pgsql-prcdlv-db-password}
+    driver-class-name: org.postgresql.Driver
+    hikari:
+      maximum-pool-size: ${yugabyte-pgsql-prcdlv-db-pool-size}
+      connectionTimeout: ${yugabyte-pgsql-prcdlv-db-connection-timeout}
+      minimumIdle: ${yugabyte-pgsql-prcdlv-db-minimum-idle}
+      idleTimeout: ${yugabyte-pgsql-prcdlv-db-idle-timeout}
+      maxLifetime: ${yugabyte-pgsql-prcdlv-db-max-lifetime}
+      schema: ${yugabyte-pgsql-prcdlv-db-schema}
+  jpa:
+    hibernate:
+      ddl-auto: none
+    show-sql: false
+    properties:
+      hibernate.hibernate.default_schema: store_price_delivery
+    database: postgresql
+
