@@ -1,11 +1,10 @@
 package com.kroger.merchandising.magicdatareader.batch.processor;
 
-import com.kroger.merchandising.magicdatareader.entity.DataItem;
-import lombok.extern.slf4j.Slf4j;
+
+import com.kroger.merchandising.magicdatareader.domain.DataItem;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 
-@Slf4j
 @Component
 public class DataItemProcessor implements ItemProcessor<DataItem, DataItem> {
     @Override
@@ -23,7 +22,6 @@ public class DataItemProcessor implements ItemProcessor<DataItem, DataItem> {
         } else {
             item.setQuantitie2("000");
         }
-        log.info("Item processed: {}", item);
         return item;
     }
 }

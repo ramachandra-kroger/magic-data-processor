@@ -6,10 +6,10 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 
 @Slf4j
 public class CustomChunkListener implements ChunkListener {
-//    @Override
-//    public void beforeChunk(ChunkContext chunkContext) {
-//        log.info("Before chunk processing: {}" ,chunkContext.getStepContext().getStepName());
-//    }
+    @Override
+    public void beforeChunk(ChunkContext chunkContext) {
+        log.info("Before chunk processing: {}" ,chunkContext.getStepContext().getStepName());
+    }
 
     @Override
     public void afterChunk(ChunkContext chunkContext) {

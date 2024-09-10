@@ -1,7 +1,8 @@
 package com.kroger.merchandising.magicdatareader.utils;
 
 import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDataReaderException;
-import com.kroger.merchandising.magicdatareader.entity.DataItem;
+
+import com.kroger.merchandising.magicdatareader.domain.DataItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.Resource;
@@ -11,8 +12,6 @@ import org.springframework.stereotype.Component;
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
-import java.net.URISyntaxException;
-import java.net.URL;
 import java.nio.charset.StandardCharsets;
 import java.time.LocalDate;
 import java.time.LocalTime;
@@ -33,7 +32,7 @@ public class FakeMagicData implements CommandLineRunner {
 
     public void generateFakeItems() throws MagicDataReaderException {
         List<String> dataItems = new ArrayList<>();
-        for (int counter = 0; counter < 100; counter++) {
+        for (int counter = 0; counter < 1000; counter++) {
             DataItem dataItem = generateFakeItem();
             dataItems.add(dataItem.dataAsTextLine());
         }
@@ -44,7 +43,7 @@ public class FakeMagicData implements CommandLineRunner {
 
 
         return DataItem.builder()
-                .location("0000" + random.nextInt(9))
+                .locationNumber("0000" + random.nextInt(9))
                 .upc("0000" + LocalTime.now().getNano())
                 .quantitie1("")
                 .permanentPrice("0000" + random.nextInt(100, 999))
