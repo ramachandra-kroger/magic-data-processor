@@ -1,5 +1,6 @@
 package com.kroger.merchandising.magicdatareader.configuration;
 
+import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
 import com.kroger.merchandising.magicdatareader.batch.processor.DataItemProcessor;
 import com.kroger.merchandising.magicdatareader.batch.reader.DataItemReader;
 import com.kroger.merchandising.magicdatareader.batch.writer.CustomKafkaItemWriter;
@@ -56,14 +57,14 @@ public class SpringBatchConfig {
     public Step step1(@Qualifier("simpleAsyncTaskExecutor") TaskExecutor taskExecutor, JobRepository jobRepository, PlatformTransactionManager platformTransactionManager){
         var name = "MagicDataWriterStep";
         var builder = new StepBuilder(name, jobRepository);
-        return builder.<DataItem, DataItem>chunk(chunkSize, platformTransactionManager)
+        return builder.<DataItem, StorePriceUpdateEvent>chunk(chunkSize, platformTransactionManager)
                 .reader(dataItemReader)
                 .processor(dataItemProcessor)
                 .writer(kafkaItemWriter)
                 .listener(new CustomChunkListener())
 //                .listener(new CustomItemProcesorListener<>())
 //                .listener(new CustomItemReadListener<>())
-                .taskExecutor(new SimpleAsyncTaskExecutor())
+                .taskExecutor(taskExecutor)
                 .build();
     }
 

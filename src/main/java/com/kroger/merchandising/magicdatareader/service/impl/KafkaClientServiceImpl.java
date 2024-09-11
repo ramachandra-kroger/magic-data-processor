@@ -1,5 +1,6 @@
 package com.kroger.merchandising.magicdatareader.service.impl;
 
+import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDataReaderException;
 import com.kroger.merchandising.magicdatareader.service.KafkaClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -23,7 +24,7 @@ public class KafkaClientServiceImpl implements KafkaClientService {
     private String targetTopic;
 
     @Override
-    public void sendKafkaEvent(String itemUpc, String division, String eventId, SpecificRecord eventMessage) {
+    public void sendKafkaEvent(String itemUpc, String division, SpecificRecord eventMessage) throws MagicDataReaderException {
         ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(targetTopic, itemUpc, eventMessage);
         try {
             CompletableFuture<SendResult<String, SpecificRecord>> future = kafkaTemplate.send(producerRecord);
@@ -35,7 +36,8 @@ public class KafkaClientServiceImpl implements KafkaClientService {
                 }
             });
         } catch (Exception ex) {
-            log.error("Unable to send event: {}", ex.getMessage());
+            log.error("Error while sending event to DESP: {}", ex.getMessage());
+            throw new MagicDataReaderException("Error while publishing event: " + ex.getMessage(), ex);
         }
     }
 }
