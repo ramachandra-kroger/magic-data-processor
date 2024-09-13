@@ -7,11 +7,12 @@ import java.util.function.Consumer;
 @Slf4j
 public class LamdaExceptionWrapper {
 
-   static <T> Consumer<T> throwableConsumerWrapper(ThrowableConsumer<T, Exception> throwableConsumer) {
+   public static <T> Consumer<T> handlingConsumerWithPotentialException(ThrowableConsumer<T, Exception> throwableConsumer) {
       return throwable -> {
          try{
             throwableConsumer.accept(throwable);
          } catch (Exception e){
+            log.error("Error in lamda execution", e);
             throw new RuntimeException(e);
          }
       };

@@ -29,10 +29,9 @@ public class KafkaClientServiceImpl implements KafkaClientService {
         try {
             CompletableFuture<SendResult<String, SpecificRecord>> future = kafkaTemplate.send(producerRecord);
             future.whenComplete((result, ex) -> {
-                if (ObjectUtils.isEmpty(ex)) {
-                    log.debug("Success processing message -  division: {}, itemUpc: {}", division, itemUpc);
-                } else {
-                    log.error("Error while processing message: {}, Exception Message: {}", eventMessage, ex.getMessage());
+                if (!ObjectUtils.isEmpty(ex)) {
+//                    log.debug("Success processing message -  division: {}, itemUpc: {}", division, itemUpc);
+                    log.error("Error while publishing message: {}, Exception Message: {}", eventMessage, ex.getMessage());
                 }
             });
         } catch (Exception ex) {

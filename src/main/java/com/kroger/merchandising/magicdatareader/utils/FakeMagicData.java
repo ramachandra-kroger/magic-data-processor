@@ -32,7 +32,7 @@ public class FakeMagicData implements CommandLineRunner {
 
     public void generateFakeItems() throws MagicDataReaderException {
         List<String> dataItems = new ArrayList<>();
-        for (int counter = 0; counter < 1000; counter++) {
+        for (int counter = 0; counter < 1000000; counter++) {
             DataItem dataItem = generateFakeItem();
             dataItems.add(dataItem.dataAsTextLine());
         }
