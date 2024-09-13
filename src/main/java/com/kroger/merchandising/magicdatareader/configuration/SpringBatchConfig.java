@@ -9,6 +9,7 @@ import com.kroger.merchandising.magicdatareader.listener.CustomChunkListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomItemProcesorListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomItemReadListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomJobListener;
+import com.kroger.merchandising.magicdatareader.listener.CustomStepExecutionListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -64,6 +65,7 @@ public class SpringBatchConfig {
                 .listener(new CustomChunkListener())
 //                .listener(new CustomItemProcesorListener<>())
 //                .listener(new CustomItemReadListener<>())
+                .listener(new CustomStepExecutionListener())
                 .taskExecutor(taskExecutor)
                 .build();
     }
