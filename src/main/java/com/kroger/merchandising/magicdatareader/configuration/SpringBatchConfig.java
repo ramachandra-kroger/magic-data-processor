@@ -1,13 +1,15 @@
 package com.kroger.merchandising.magicdatareader.configuration;
 
+import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
 import com.kroger.merchandising.magicdatareader.batch.processor.DataItemProcessor;
 import com.kroger.merchandising.magicdatareader.batch.reader.DataItemReader;
-import com.kroger.merchandising.magicdatareader.batch.writer.DataItemWriter;
-import com.kroger.merchandising.magicdatareader.entity.DataItem;
+import com.kroger.merchandising.magicdatareader.batch.writer.CustomKafkaItemWriter;
+import com.kroger.merchandising.magicdatareader.domain.DataItem;
 import com.kroger.merchandising.magicdatareader.listener.CustomChunkListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomItemProcesorListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomItemReadListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomJobListener;
+import com.kroger.merchandising.magicdatareader.listener.CustomStepExecutionListener;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -30,7 +32,7 @@ public class SpringBatchConfig {
 
     private final JobRepository jobRepository;
     private final DataItemReader dataItemReader;
-    private final DataItemWriter dataItemWriter;
+    private final CustomKafkaItemWriter kafkaItemWriter;
     private final DataItemProcessor dataItemProcessor;
 
     @Value("${spring.batch.chunk-size}")
@@ -40,7 +42,7 @@ public class SpringBatchConfig {
     @Bean(name = "simpleAsyncTaskExecutor")
     public TaskExecutor taskExecutor() {
         SimpleAsyncTaskExecutor simpleAsyncTaskExecutor =  new SimpleAsyncTaskExecutor("spring_batch");
-                simpleAsyncTaskExecutor.setConcurrencyLimit(2);
+                simpleAsyncTaskExecutor.setConcurrencyLimit(5);
                 return simpleAsyncTaskExecutor;
     }
 
@@ -56,14 +58,15 @@ public class SpringBatchConfig {
     public Step step1(@Qualifier("simpleAsyncTaskExecutor") TaskExecutor taskExecutor, JobRepository jobRepository, PlatformTransactionManager platformTransactionManager){
         var name = "MagicDataWriterStep";
         var builder = new StepBuilder(name, jobRepository);
-        return builder.<DataItem, DataItem>chunk(chunkSize, platformTransactionManager)
+        return builder.<DataItem, StorePriceUpdateEvent>chunk(chunkSize, platformTransactionManager)
                 .reader(dataItemReader)
                 .processor(dataItemProcessor)
-                .writer(dataItemWriter)
+                .writer(kafkaItemWriter)
                 .listener(new CustomChunkListener())
-                .listener(new CustomItemProcesorListener<>())
-                .listener(new CustomItemReadListener<>())
-                .taskExecutor(new SimpleAsyncTaskExecutor())
+//                .listener(new CustomItemProcesorListener<>())
+//                .listener(new CustomItemReadListener<>())
+                .listener(new CustomStepExecutionListener())
+                .taskExecutor(taskExecutor)
                 .build();
     }
 

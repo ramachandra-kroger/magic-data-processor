@@ -1,6 +1,7 @@
 package com.kroger.merchandising.magicdatareader.batch.reader;
 
-import com.kroger.merchandising.magicdatareader.entity.DataItem;
+
+import com.kroger.merchandising.magicdatareader.domain.DataItem;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
@@ -20,7 +21,7 @@ public class DataItemReader extends FlatFileItemReader<DataItem> {
         DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
         lineTokenizer.setDelimiter("|");
         lineTokenizer.setStrict(false);
-        lineTokenizer.setNames("location", "upc", "quantitie1", "permanentPrice", "quantitie2", "teporaryPrice", "effecctiveDateFrom","effecctiveDateTo","timingFlag","durationFlag","sku","magicCoupon", "couponUpc");
+        lineTokenizer.setNames("locationNumber", "upc", "quantitie1", "permanentPrice", "quantitie2", "teporaryPrice", "effecctiveDateFrom","effecctiveDateTo","timingFlag","durationFlag","sku","magicCoupon", "couponUpc");
         BeanWrapperFieldSetMapper<DataItem> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
         fieldSetMapper.setTargetType(DataItem.class);
         DefaultLineMapper<DataItem> lineMapper = new DefaultLineMapper<>();
