@@ -55,3 +55,6 @@ spring:
       enable-idempotence: ${kafka-enable-idempotence}
 app:
   target-topic: merchandising-price
+  magic-data:
+    directory: ${magic-data-directory}
+
