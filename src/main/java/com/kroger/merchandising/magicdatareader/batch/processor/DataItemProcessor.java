@@ -45,7 +45,6 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
 
         return new StorePriceUpdateEvent(eventHeader, item.getUpc(), "014", item.getLocationNumber(), "09/10/2024", "Unit", "Unit", "L", null, "19.99", "1", "14.99", 1, null, null, null, item.getCouponUpc(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, BASE);
 
-
     }
 
 
