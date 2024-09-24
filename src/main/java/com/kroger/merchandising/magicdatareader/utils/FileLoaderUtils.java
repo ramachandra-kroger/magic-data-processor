@@ -2,30 +2,27 @@ package com.kroger.merchandising.magicdatareader.utils;
 
 import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDataReaderException;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.core.io.DefaultResourceLoader;
 import org.springframework.core.io.Resource;
-
-import java.io.File;
+import org.springframework.core.io.ResourceLoader;
 
 @Slf4j
 public class FileLoaderUtils {
+    private static final ResourceLoader resourceLoader = new DefaultResourceLoader();
+
     private FileLoaderUtils() {}
 
-    public static Resource loadFileIfExists(String folderFullPath) throws MagicDataReaderException {
+    public static Resource loadFileIfExists(String fileFullPath) throws MagicDataReaderException {
         try {
-            File folder = new File(folderFullPath);
-            if (!folder.exists()) {
-                log.error("Folder {} does not exist", folderFullPath);
-                throw new MagicDataReaderException("Folder " + folderFullPath + " does not exist");
+            Resource resource = resourceLoader.getResource("file:"+fileFullPath);
+            if (!resource.exists()) {
+                log.error("File {} does not exist", fileFullPath);
+                throw new MagicDataReaderException("Folder " + fileFullPath + " does not exist");
             }
-            File[] files = folder.listFiles();
-            if (files == null ) {
-                log.error("Folder {} is empty", folderFullPath);
-                throw new MagicDataReaderException("Folder " + folderFullPath + " is empty");
-            }
-            return files.length > 0 ? (Resource) files[0] : null;
+            return resource;
         } catch (Exception e) {
-            log.error("Unable to load any magic file from: {}", folderFullPath, e);
-            throw new MagicDataReaderException("Unable to load any magic file from: " + folderFullPath , e);
+            log.error("Unable to load any magic file from: {}", fileFullPath, e);
+            throw new MagicDataReaderException("Unable to load any magic file from: " + fileFullPath , e);
         }
     }
 }

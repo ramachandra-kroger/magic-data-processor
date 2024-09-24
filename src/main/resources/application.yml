@@ -8,11 +8,11 @@ spring:
   batch:
     jdbc:
       initialize-schema: never
-    chunk-size: 10
+    chunk-size: ${spring-batch-chunk-size}
     job:
       enabled: false
   application:
-    name: magicdatareader
+    name: magic-data-processor
   datasource:
     url: ${yugabyte-pgsql-prcdlv-db-url}
     username: ${yugabyte-pgsql-prcdlv-db-username}
@@ -32,4 +32,26 @@ spring:
     properties:
       hibernate.hibernate.default_schema: store_price_delivery
     database: postgresql
-
+  kafka:
+    bootstrap-servers: ${kafka-bootstrap-servers}
+    schema-registry-url: ${kafka-schema-registry-url}
+    security-protocol: SASL_SSL
+    schema-registry-secret: ${kafka-schema-registry-secret}
+    producer:
+      sasl-mechanism: OAUTHBEARER
+      acks: all
+      o-auth-config:
+        producer-client-id: ${kafka-producer-client-id}
+        producer-tenant-id: ${kafka-producer-tenant-id}
+        producer-client-key: ${kafka-producer-client-key}
+    mes:
+      request-timeout-ms-config: ${kafka-request-timeout-ms-config}
+      buffer-memory-config: ${kafka-buffer-memory-config}
+      linger-ms-config: ${kafka-linger-ms-config}
+      max-request-size-config: ${kafka-max-request-size-config}
+      batch-size-config: ${kafka-batch-size-config}
+      retries-config: ${kafka-retries-config}
+      max-age: ${kafka-metadata-max-age}
+      enable-idempotence: ${kafka-enable-idempotence}
+app:
+  target-topic: merchandising-price

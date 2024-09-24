@@ -18,14 +18,14 @@ public class SchedulerConfig {
     private final Job job;
 
     @Value("${app.magic-data.directory}")
-    String directoryFullPath;
+    String fileFullPath;
 
 
     @Scheduled(cron = "0 */5 * * * ?")
     public void runJob() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("startedAt", System.currentTimeMillis())
-                .addString("directoryFullPath", directoryFullPath)
+                .addString("fileFullPath", fileFullPath)
                 .toJobParameters();
         jobLauncher.run(job, jobParameters);
     }

@@ -4,6 +4,7 @@ import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDat
 
 import com.kroger.merchandising.magicdatareader.domain.DataItem;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
@@ -23,6 +24,9 @@ import java.util.Random;
 @Component
 public class FakeMagicData implements CommandLineRunner {
     private final ResourceLoader resourceLoader;
+
+    @Value("${app.magic-data.directory}")
+    String fileFullPath;
 
     public FakeMagicData(ResourceLoader resourceLoader) {
         this.resourceLoader = resourceLoader;
@@ -60,10 +64,10 @@ public class FakeMagicData implements CommandLineRunner {
     }
 
     private void writeDataItemsToFile(List<String> lines) throws MagicDataReaderException {
-        String fileName = "data/magic-data.txt";
+
         File file = null;
         try {
-            file = getFileFromResource(fileName);
+            file = getFileFromResource(fileFullPath);
         } catch (Exception e) {
             log.error("Error while getting file location: {} ", e.getMessage());
             throw new MagicDataReaderException(e);
@@ -81,7 +85,7 @@ public class FakeMagicData implements CommandLineRunner {
 
     private File getFileFromResource(String fileName) throws MagicDataReaderException {
         File file = null;
-        Resource resource = resourceLoader.getResource("classpath:" + fileName);
+        Resource resource = resourceLoader.getResource("file:" + fileName);
         try {
             file = resource.getFile();
         } catch (IOException e) {
