@@ -12,7 +12,6 @@ import org.springframework.batch.item.file.FlatFileItemReader;
 import org.springframework.batch.item.file.mapping.BeanWrapperFieldSetMapper;
 import org.springframework.batch.item.file.mapping.DefaultLineMapper;
 import org.springframework.batch.item.file.transform.DelimitedLineTokenizer;
-import org.springframework.core.io.ClassPathResource;
 import org.springframework.core.io.Resource;
 import org.springframework.stereotype.Component;
 import static com.kroger.merchandising.magicdatareader.utils.FileLoaderUtils.loadFileIfExists;
@@ -22,15 +21,12 @@ import static com.kroger.merchandising.magicdatareader.utils.FileLoaderUtils.loa
 public class DataItemReader extends FlatFileItemReader<DataItem> implements StepExecutionListener {
 
     public DataItemReader() {
-
             log.info("Initializing DataItemReader");
-            setResource(new ClassPathResource("/data/magic-data.txt"));
-            //TODO- move setResource
             setStrict(true);
             DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
             lineTokenizer.setDelimiter("|");
             lineTokenizer.setStrict(false);
-            lineTokenizer.setNames("location", "upc", "quantitie1", "permanentPrice", "quantitie2", "teporaryPrice", "effecctiveDateFrom","effecctiveDateTo","timingFlag","durationFlag","sku","magicCoupon", "couponUpc");
+            lineTokenizer.setNames("locationNumber", "upc", "quantitie1", "permanentPrice", "quantitie2", "teporaryPrice", "effecctiveDateFrom","effecctiveDateTo","timingFlag","durationFlag","sku","magicCoupon", "couponUpc");
             BeanWrapperFieldSetMapper<DataItem> fieldSetMapper = new BeanWrapperFieldSetMapper<>();
             fieldSetMapper.setTargetType(DataItem.class);
             DefaultLineMapper<DataItem> lineMapper = new DefaultLineMapper<>();
@@ -43,16 +39,16 @@ public class DataItemReader extends FlatFileItemReader<DataItem> implements Step
         public void beforeStep(StepExecution stepExecution) {
 
             JobParameters jobParameters = stepExecution.getJobParameters();
-            String filePath = jobParameters.getString("fileFullPath");
-            log.info("filePath = [{}].", filePath);
+            String fileInput = jobParameters.getString("fileInput");
+            log.info("filePath = [{}].", fileInput);
             //TODO-
-            assert filePath != null;
+            assert fileInput != null;
             Resource resource = null;
             try {
-                resource = loadFileIfExists(filePath);
+                resource = loadFileIfExists(fileInput);
                 setResource(resource);
             } catch (MagicDataReaderException e) {
-                log.error("Reader failed to load file [{}].", filePath, e);
+                log.error("Reader failed to load file [{}].", fileInput, e);
             }
 
         }
