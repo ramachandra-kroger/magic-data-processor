@@ -21,11 +21,10 @@ import java.util.List;
 import java.util.Random;
 
 @Slf4j
-@Component
 public class FakeMagicData implements CommandLineRunner {
     private final ResourceLoader resourceLoader;
 
-    @Value("${app.input}")
+    @Value("${app.magic.file-input}")
     private String fileInput;
 
     public FakeMagicData(ResourceLoader resourceLoader) {
@@ -64,7 +63,6 @@ public class FakeMagicData implements CommandLineRunner {
     }
 
     private void writeDataItemsToFile(List<String> lines) throws MagicDataReaderException {
-        ;
         File file = null;
         try {
             file = getFileFromResource(fileInput);

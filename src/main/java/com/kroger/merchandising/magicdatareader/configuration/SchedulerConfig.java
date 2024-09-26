@@ -10,20 +10,19 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-@Configuration
+
 @EnableScheduling
 @RequiredArgsConstructor
 public class SchedulerConfig {
     private final JobLauncher jobLauncher;
     private final Job job;
 
-    @Value("${app.input}")
+    @Value("${app.magic.file-input}")
     String fileInput;
 
 
     @Scheduled(cron = "0 */5 * * * ?")
     public void runJob() throws Exception {
-        System.out.println("path: "+fileInput);
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
                 .addString("fileInput", fileInput)

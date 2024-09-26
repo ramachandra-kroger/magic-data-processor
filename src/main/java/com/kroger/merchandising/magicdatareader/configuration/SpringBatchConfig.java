@@ -14,7 +14,7 @@ import org.springframework.batch.core.Step;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
-import org.springframework.beans.factory.annotation.Qualifier;
+import org.springframework.batch.item.file.FlatFileParseException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
@@ -46,27 +46,29 @@ public class SpringBatchConfig {
 
 
     @Bean(name = "insertIntoDbFromFileJob")
-    public Job insertIntoDbFromFileJob(Step step1) {
+    public Job insertIntoDbFromFileJob(Step stepPublisher) {
         var name = "MagicDataReaderJob";
         var builder = new JobBuilder(name, jobRepository);
-        return builder.start(step1).listener(new CustomJobListener()).build();
+        return builder.start(stepPublisher).listener(new CustomJobListener()).build();
     }
 
     @Bean
-    public Step step1(@Qualifier("simpleAsyncTaskExecutor") TaskExecutor taskExecutor, JobRepository jobRepository, PlatformTransactionManager platformTransactionManager){
-        var name = "MagicDataWriterStep";
-        var builder = new StepBuilder(name, jobRepository);
-        return builder.<DataItem, StorePriceUpdateEvent>chunk(chunkSize, platformTransactionManager)
+    public Step stepPublisher(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager){
+        return new StepBuilder("magicDataPublisher", jobRepository)
+                .<DataItem, StorePriceUpdateEvent>chunk(chunkSize, platformTransactionManager)
                 .reader(dataItemReader)
                 .processor(dataItemProcessor)
                 .writer(kafkaItemWriter)
                 .listener(new CustomChunkListener())
-//                .listener(new CustomItemProcesorListener<>())
-//                .listener(new CustomItemReadListener<>())
                 .listener(new CustomStepExecutionListener())
+                .faultTolerant()
+                .skipLimit(20)
+                .skip(FlatFileParseException.class)
                 .taskExecutor(taskExecutor())
                 .build();
     }
+
+
 
 
 

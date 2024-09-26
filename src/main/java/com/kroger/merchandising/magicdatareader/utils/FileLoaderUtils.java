@@ -17,13 +17,13 @@ public class FileLoaderUtils {
         try {
             Resource resource = resourceLoader.getResource("file:" + fileFullPath);
             if (!resource.exists()) {
-                log.error("File {} does not exist", fileFullPath);
-                throw new MagicDataReaderException("Folder " + fileFullPath + " does not exist");
+                log.error("File {} was not found..", fileFullPath);
+                throw new MagicDataReaderException("File " + fileFullPath + " was not found..");
             }
             return resource;
         } catch (Exception e) {
-            log.error("Unable to load any magic file from: {}", fileFullPath, e);
-            throw new MagicDataReaderException("Unable to load any magic file from: " + fileFullPath, e);
+            log.error("File {} was not found..", fileFullPath, e);
+            throw new RuntimeException("File: " + fileFullPath + " was not found..", e);
         }
     }
 }

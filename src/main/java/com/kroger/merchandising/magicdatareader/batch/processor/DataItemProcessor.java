@@ -4,8 +4,10 @@ package com.kroger.merchandising.magicdatareader.batch.processor;
 import com.kroger.desp.commons.merchandising.storeprice.EventHeader;
 import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
 import com.kroger.merchandising.magicdatareader.domain.DataItem;
+import com.kroger.merchandising.magicdatareader.service.FailedEventService;
 import com.kroger.merchandising.magicdatareader.service.UUIDGenerator;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.item.ItemProcessor;
 import org.springframework.stereotype.Component;
 import java.time.Instant;
@@ -14,10 +16,12 @@ import static com.kroger.merchandising.magicdatareader.utils.Constants.BASE;
 import static com.kroger.merchandising.magicdatareader.utils.Constants.EVENT_SOURCE;
 import static com.kroger.merchandising.magicdatareader.utils.Constants.UPSERT_PRICE_INFO;
 
+@Slf4j
 @Component
 @RequiredArgsConstructor
 public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpdateEvent> {
     private final UUIDGenerator uuidGenerator;
+    private final FailedEventService failedEventService;
 
 
     @Override
@@ -30,10 +34,10 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
             item.setQuantitie1("001");
         }
         //derivate quantitie2
-        if(item.getDurationFlag().equals("P")){
-            item.setQuantitie2("001");
-        } else {
-            item.setQuantitie2("000");
+        switch (item.getDurationFlag()) {
+            case "P" -> item.setQuantitie2("001");
+            case "T" -> item.setQuantitie2("000");
+            default -> failedEventService.handleBadRecord(item.toString());
         }
 
 
@@ -43,7 +47,7 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
                 .setType(UPSERT_PRICE_INFO)
                 .setSource(EVENT_SOURCE).build();
 
-        return new StorePriceUpdateEvent(eventHeader, item.getUpc(), "014", item.getLocationNumber(), "09/10/2024", "Unit", "Unit", "L", null, "19.99", "1", "14.99", 1, null, null, null, item.getCouponUpc(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, BASE);
+        return new StorePriceUpdateEvent(eventHeader, item.getUpc(), "701", item.getLocationNumber(), "09/10/2024", "Unit", "Unit", "L", null, "19.99", "1", "14.99", 1, null, null, null, item.getCouponUpc(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, BASE);
 
     }
 
