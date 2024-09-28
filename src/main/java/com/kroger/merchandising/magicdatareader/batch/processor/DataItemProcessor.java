@@ -25,7 +25,7 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
 
 
     @Override
-    public StorePriceUpdateEvent process(DataItem item) throws Exception {
+    public StorePriceUpdateEvent process(DataItem item) {
         //TODO- apply any logic needed for records fields
         //derivate quantitie1
         if(item.getTemporaryPrice().equals("0000000")){
@@ -33,6 +33,7 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
         } else {
             item.setQuantitie1("001");
         }
+
         //derivate quantitie2
         switch (item.getDurationFlag()) {
             case "P" -> item.setQuantitie2("001");
@@ -46,7 +47,7 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
                 .setTime(Instant.now().toEpochMilli())
                 .setType(UPSERT_PRICE_INFO)
                 .setSource(EVENT_SOURCE).build();
-
+        //TODO- map from dataItem to StorePriceUpdate event missing fields
         return new StorePriceUpdateEvent(eventHeader, item.getUpc(), "701", item.getLocationNumber(), "09/10/2024", "Unit", "Unit", "L", null, "19.99", "1", "14.99", 1, null, null, null, item.getCouponUpc(), null, null, null, null, null, null, null, null, null, null, null, null, null, null, BASE);
 
     }

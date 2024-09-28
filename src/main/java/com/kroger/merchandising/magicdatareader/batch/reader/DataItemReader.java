@@ -9,7 +9,6 @@ import jakarta.validation.Validation;
 import jakarta.validation.Validator;
 import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.ExitStatus;
-import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParameters;
 import org.springframework.batch.core.StepExecution;
 import org.springframework.batch.core.StepExecutionListener;
@@ -51,15 +50,12 @@ public class DataItemReader extends FlatFileItemReader<DataItem> implements Step
         @Override
         public DataItem doRead() throws Exception {
             DataItem dataItem = super.doRead();
-
             if (Objects.isNull(dataItem)) return null;
-
             Set<ConstraintViolation<DataItem>> violations = this.factory.validate(dataItem);
             if (!violations.isEmpty()) {
                 failedEventService.handleBadRecord(dataItem.dataAsTextLine());
                 violations.forEach(violation -> log.error(violation.getMessage()));
                 String errorMsg = String.format("The input has validation failed. Data is '%s'", dataItem);
-
                 throw new FlatFileParseException(errorMsg, Objects.toString(dataItem));
             }
             else {
@@ -69,7 +65,6 @@ public class DataItemReader extends FlatFileItemReader<DataItem> implements Step
 
         @Override
         public void beforeStep(StepExecution stepExecution) {
-
             JobParameters jobParameters = stepExecution.getJobParameters();
             String fileInput = jobParameters.getString("fileInput");
             assert fileInput != null;
@@ -80,7 +75,6 @@ public class DataItemReader extends FlatFileItemReader<DataItem> implements Step
             } catch (MagicDataReaderException e) {
                 log.error("Reader failed to load file {}.", fileInput, e);
             }
-
         }
 
         @Override
