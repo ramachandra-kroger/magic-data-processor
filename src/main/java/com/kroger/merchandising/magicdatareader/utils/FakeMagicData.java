@@ -8,8 +8,6 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.boot.CommandLineRunner;
 import org.springframework.core.io.Resource;
 import org.springframework.core.io.ResourceLoader;
-import org.springframework.stereotype.Component;
-
 import java.io.File;
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -95,8 +93,13 @@ public class FakeMagicData implements CommandLineRunner {
 
     @Override
     public void run(String... args) throws Exception {
-        log.info("Running FakeMagicData...");
-        generateFakeItems();
-        log.info("Finished FakeMagicData!");
+        boolean crateData = false;
+        if(crateData) {
+            log.info("Running FakeMagicData...");
+            generateFakeItems();
+            log.info("Finished FakeMagicData!");
+        } else {
+            log.info("Running Job with out crate data...");
+        }
     }
 }

@@ -9,7 +9,7 @@ import org.springframework.batch.core.scope.context.ChunkContext;
 @Slf4j
 @RequiredArgsConstructor
 public class CustomChunkListener implements ChunkListener {
-    private final FailedEventService failedEventService;
+//    private final FailedEventService failedEventService;
 
     @Override
     public void beforeChunk(ChunkContext chunkContext) {
@@ -19,7 +19,7 @@ public class CustomChunkListener implements ChunkListener {
 
     @Override
     public void afterChunk(ChunkContext chunkContext) {
-        failedEventService.persistFailedEventsIfExist();
+//        failedEventService.persistFailedEventsIfExist();
         log.info("After chunk processing: {}", chunkContext.getStepContext().getStepName());
     }
 

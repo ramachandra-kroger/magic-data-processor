@@ -1,6 +1,7 @@
 package com.kroger.merchandising.magicdatareader.controller;
 
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.JobExecution;
 import org.springframework.batch.core.JobParametersBuilder;
@@ -18,6 +19,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 
+@Slf4j
 @RestController
 @RequestMapping("/api/batch")
 @RequiredArgsConstructor
@@ -33,7 +35,7 @@ public class MagicController {
         JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
         jobParametersBuilder.addLong("time", System.currentTimeMillis());
         jobParametersBuilder.addString("fileInput", fileInput);
-        if(!ObjectUtils.isEmpty(jobId)) {
+        if (!ObjectUtils.isEmpty(jobId)) {
             jobParametersBuilder.addString("jobId", jobId);
         }
         JobExecution jobExecution;
@@ -43,11 +45,11 @@ public class MagicController {
                  | JobRestartException
                  | JobInstanceAlreadyCompleteException
                  | JobParametersInvalidException e) {
-                    e.printStackTrace();
-                // return exception message
-                return new ResponseEntity<>( e.getMessage(),HttpStatus.OK);
+            e.printStackTrace();
+            log.error("Job execution failed", e);
+            return new ResponseEntity<>(e.getMessage(), HttpStatus.OK);
         }
-        // return job execution status
+
         return new ResponseEntity<>(jobExecution.getStatus().name(), HttpStatus.OK);
     }
 

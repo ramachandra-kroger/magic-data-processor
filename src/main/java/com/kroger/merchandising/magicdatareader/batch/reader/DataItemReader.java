@@ -29,11 +29,9 @@ import static com.kroger.merchandising.magicdatareader.utils.FileLoaderUtils.loa
 @Component
 public class DataItemReader extends FlatFileItemReader<DataItem> implements StepExecutionListener {
     private final Validator factory;
-    private final FailedEventService failedEventService;
 
     public DataItemReader(FailedEventService failedEventService) {
-            this.failedEventService = failedEventService;
-//            setStrict(true);
+            setStrict(true);
             DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
             lineTokenizer.setDelimiter("|");
             lineTokenizer.setStrict(false);
@@ -53,7 +51,6 @@ public class DataItemReader extends FlatFileItemReader<DataItem> implements Step
             if (Objects.isNull(dataItem)) return null;
             Set<ConstraintViolation<DataItem>> violations = this.factory.validate(dataItem);
             if (!violations.isEmpty()) {
-                failedEventService.handleBadRecord(dataItem.dataAsTextLine());
                 violations.forEach(violation -> log.error(violation.getMessage()));
                 String errorMsg = String.format("The input has validation failed. Data is '%s'", dataItem);
                 throw new FlatFileParseException(errorMsg, Objects.toString(dataItem));

@@ -6,9 +6,9 @@ import com.kroger.merchandising.magicdatareader.batch.reader.DataItemReader;
 import com.kroger.merchandising.magicdatareader.batch.writer.CustomKafkaItemWriter;
 import com.kroger.merchandising.magicdatareader.domain.DataItem;
 import com.kroger.merchandising.magicdatareader.listener.CustomChunkListener;
+import com.kroger.merchandising.magicdatareader.listener.CustomItemProcesorListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomJobListener;
 import com.kroger.merchandising.magicdatareader.listener.CustomStepExecutionListener;
-import com.kroger.merchandising.magicdatareader.service.FailedEventService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.Step;
@@ -33,7 +33,6 @@ public class SpringBatchConfig {
     private final DataItemReader dataItemReader;
     private final CustomKafkaItemWriter kafkaItemWriter;
     private final DataItemProcessor dataItemProcessor;
-    private final FailedEventService failedEventService;
 
     @Value("${spring.batch.chunk-size}")
     private int chunkSize;
@@ -61,8 +60,9 @@ public class SpringBatchConfig {
                 .reader(dataItemReader)
                 .processor(dataItemProcessor)
                 .writer(kafkaItemWriter)
-                .listener(new CustomChunkListener(failedEventService))
+                .listener(new CustomChunkListener())
                 .listener(new CustomStepExecutionListener())
+                .listener(new CustomItemProcesorListener<>())
                 .faultTolerant()
                 .skipLimit(20)
                 .skip(FlatFileParseException.class)

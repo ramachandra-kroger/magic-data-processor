@@ -38,7 +38,7 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
         switch (item.getDurationFlag()) {
             case "P" -> item.setQuantitie2("001");
             case "T" -> item.setQuantitie2("000");
-            default -> failedEventService.handleBadRecord(item.toString());
+            default -> log.error("Unknown duration flag: {}", item.getDurationFlag());
         }
 
 
