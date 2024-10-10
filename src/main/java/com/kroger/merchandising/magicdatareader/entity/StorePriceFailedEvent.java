@@ -17,7 +17,7 @@ import java.time.LocalDateTime;
 import java.util.UUID;
 
 @Entity
-@Table(name = "store_price_events")
+@Table(name = "store_price_events", schema = "store_price")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

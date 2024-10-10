@@ -3,8 +3,8 @@ package com.kroger.merchandising.magicdatareader.batch.processor;
 
 import com.kroger.desp.commons.merchandising.storeprice.EventHeader;
 import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
+import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDataReaderException;
 import com.kroger.merchandising.magicdatareader.domain.DataItem;
-import com.kroger.merchandising.magicdatareader.service.FailedEventService;
 import com.kroger.merchandising.magicdatareader.service.UUIDGenerator;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -21,11 +21,10 @@ import static com.kroger.merchandising.magicdatareader.utils.Constants.UPSERT_PR
 @RequiredArgsConstructor
 public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpdateEvent> {
     private final UUIDGenerator uuidGenerator;
-    private final FailedEventService failedEventService;
 
 
     @Override
-    public StorePriceUpdateEvent process(DataItem item) {
+    public StorePriceUpdateEvent process(DataItem item) throws MagicDataReaderException {
         //TODO- apply any logic needed for records fields
         //derivate quantitie1
         if(item.getTemporaryPrice().equals("0000000")){
@@ -38,7 +37,10 @@ public class DataItemProcessor implements ItemProcessor<DataItem, StorePriceUpda
         switch (item.getDurationFlag()) {
             case "P" -> item.setQuantitie2("001");
             case "T" -> item.setQuantitie2("000");
-            default -> log.error("Unknown duration flag: {}", item.getDurationFlag());
+            default -> {
+                log.error("Unknown duration flag: {}", item.getDurationFlag());
+                throw new MagicDataReaderException("Invalid value for Duration Flag: "+item.getDurationFlag());
+            }
         }
 
 

@@ -1,1 +1,1 @@
-DataItem(locationNumber=00007, upc=00003748940008, quantitie1=, permanentPrice=0000503, quantitie2=, temporaryPrice=0000625, effectiveDateFrom=2024-07-18, effectiveDateTo=2024-08-27, timingFlag=F, durationFlag=T, sku=51329533, magicCoupon=29927288, couponUpc=0000000004845)
+00007|00003748940008||0000503||0000625|2024-07-18|2024-08-27|F|T|51329533|29927288|0000000004845

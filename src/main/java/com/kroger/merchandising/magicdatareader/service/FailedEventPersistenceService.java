@@ -6,4 +6,5 @@ import java.util.List;
 
 public interface FailedEventPersistenceService {
     void saveAll(List<StorePriceFailedEvent> failedEvents);
+    void saveBadFileText(String badFileText, String division, String jobId);
 }

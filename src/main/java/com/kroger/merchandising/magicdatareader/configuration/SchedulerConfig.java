@@ -10,7 +10,7 @@ import org.springframework.context.annotation.Configuration;
 import org.springframework.scheduling.annotation.EnableScheduling;
 import org.springframework.scheduling.annotation.Scheduled;
 
-
+//TODO- add Configuration annotation
 @EnableScheduling
 @RequiredArgsConstructor
 public class SchedulerConfig {
@@ -20,12 +20,15 @@ public class SchedulerConfig {
     @Value("${app.magic.file-input}")
     String fileInput;
 
+    @Value("${app.magic.file-error}")
+    private String fileError;
+
 
     @Scheduled(cron = "0 */5 * * * ?")
     public void runJob() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()
                 .addLong("time", System.currentTimeMillis())
-                .addString("fileInput", fileInput)
+                .addString("FILE_INPUT", fileInput)
                 .toJobParameters();
         jobLauncher.run(job, jobParameters);
     }

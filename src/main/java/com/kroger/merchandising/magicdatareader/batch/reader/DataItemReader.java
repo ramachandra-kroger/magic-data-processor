@@ -30,7 +30,7 @@ import static com.kroger.merchandising.magicdatareader.utils.FileLoaderUtils.loa
 public class DataItemReader extends FlatFileItemReader<DataItem> implements StepExecutionListener {
     private final Validator factory;
 
-    public DataItemReader(FailedEventService failedEventService) {
+    public DataItemReader() {
             setStrict(true);
             DelimitedLineTokenizer lineTokenizer = new DelimitedLineTokenizer();
             lineTokenizer.setDelimiter("|");
@@ -63,7 +63,7 @@ public class DataItemReader extends FlatFileItemReader<DataItem> implements Step
         @Override
         public void beforeStep(StepExecution stepExecution) {
             JobParameters jobParameters = stepExecution.getJobParameters();
-            String fileInput = jobParameters.getString("fileInput");
+            String fileInput = jobParameters.getString("FILE_INPUT");
             assert fileInput != null;
             Resource resource = null;
             try {

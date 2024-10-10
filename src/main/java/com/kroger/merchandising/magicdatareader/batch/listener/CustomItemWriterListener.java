@@ -1,4 +1,4 @@
-package com.kroger.merchandising.magicdatareader.listener;
+package com.kroger.merchandising.magicdatareader.batch.listener;
 
 import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
 import com.kroger.merchandising.magicdatareader.entity.StorePriceFailedEvent;
