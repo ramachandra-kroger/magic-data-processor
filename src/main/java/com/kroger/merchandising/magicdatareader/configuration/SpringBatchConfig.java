@@ -17,6 +17,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
 import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
+import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
@@ -77,8 +78,8 @@ public class SpringBatchConfig {
                 .writer(kafkaItemWriter)
                 .listener(new CustomChunkListener())
                 .listener(new CustomStepExecutionListener())
-                .listener(new CustomItemProcesorListener<>(failedEventPersistenceService))
-                .listener(new CustomReadListener(failedEventPersistenceService))
+                .listener(customItemProcesorListener())
+                .listener(customReadListener())
 //                .listener(skipListener())
                 .faultTolerant()
                 .skipPolicy(skipPolicy())
@@ -87,7 +88,17 @@ public class SpringBatchConfig {
     }
 
 
+    @Bean
+    @StepScope
+    public CustomReadListener customReadListener() {
+        return new CustomReadListener(failedEventPersistenceService);
+    }
 
+    @Bean
+    @StepScope
+    public CustomItemProcesorListener<StorePriceUpdateEvent, Throwable> customItemProcesorListener() {
+        return new CustomItemProcesorListener<>(failedEventPersistenceService);
+    }
 
 
 }

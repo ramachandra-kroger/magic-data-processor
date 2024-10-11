@@ -30,15 +30,12 @@ public class MagicController {
     @Value("${app.magic.file-input}")
     private String fileInput;
 
-    @Value("${app.magic.file-error}")
-    private String fileError;
 
     @GetMapping
     public ResponseEntity<String> startMagicJob(@RequestParam String jobId) {
         JobParametersBuilder jobParametersBuilder = new JobParametersBuilder();
         jobParametersBuilder.addLong("time", System.currentTimeMillis());
         jobParametersBuilder.addString("FILE_INPUT", fileInput);
-        jobParametersBuilder.addString("FILE_ERROR", fileError);
         if (!ObjectUtils.isEmpty(jobId)) {
             jobParametersBuilder.addString("jobId", jobId);
         }

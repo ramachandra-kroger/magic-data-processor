@@ -20,10 +20,6 @@ public class SchedulerConfig {
     @Value("${app.magic.file-input}")
     String fileInput;
 
-    @Value("${app.magic.file-error}")
-    private String fileError;
-
-
     @Scheduled(cron = "0 */5 * * * ?")
     public void runJob() throws Exception {
         JobParameters jobParameters = new JobParametersBuilder()

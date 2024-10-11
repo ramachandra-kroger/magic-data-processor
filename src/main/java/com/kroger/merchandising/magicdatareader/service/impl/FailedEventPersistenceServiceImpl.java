@@ -33,18 +33,18 @@ public class FailedEventPersistenceServiceImpl implements FailedEventPersistence
     }
 
     @Override
-    public void saveBadFileText(String badFileText, String division, String jobId) {
-        String sql = "INSERT INTO store_price.magic_file_bad_data (created_timestamp, division_id, text_line, job_id) values (?,?,?,?);";
+    public void saveBadFileText(String badFileText, String division, Long jobId) {
+        String sql = "INSERT INTO store_price.magic_file_bad_records (created_timestamp, division_id, text_line, job_id) values (?,?,?,?);";
         PreparedStatementSetter preparedStatementSetter = ps -> {
             ps.setTimestamp(1, Timestamp.valueOf(LocalDateTime.now()));
             ps.setString(2, division);
-            ps.setString(3, badFileText);
-            ps.setString(4, jobId);
+            ps.setBytes(3, badFileText.getBytes());
+            ps.setLong(4, jobId);
         };
         try {
             jdbcTemplate.update(sql, preparedStatementSetter);
         } catch (Exception ex) {
-            log.error("Error while inserting magic_file_bad_data into store_price table: {}", ex.getMessage());
+            log.error("Error while inserting magic_file_bad_recod into store_price table: {}", ex.getMessage());
         }
     }
 

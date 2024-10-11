@@ -89,10 +89,10 @@ CREATE SEQUENCE store_price.BATCH_JOB_SEQ MAXVALUE 9223372036854775807 NO CYCLE;
 --
 -- Store bad data from magic file
 --
-CREATE TABLE store_price.magic_file_bad_data
+CREATE TABLE store_price.magic_file_bad_records
 (
     created_timestamp   DATETIME2(6) NOT NULL,
     division_id         VARCHAR(3) NOT NULL,
     text_line           VARBINARY(MAX) NOT NULL,
-    job_id              VARCHAR(64) NOT NULL,
+    job_id              BIGINT NOT NULL,
 );
