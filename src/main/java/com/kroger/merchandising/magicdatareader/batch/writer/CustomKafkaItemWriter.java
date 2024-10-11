@@ -1,6 +1,8 @@
 package com.kroger.merchandising.magicdatareader.batch.writer;
 
 import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
+import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDataReaderException;
+import com.kroger.merchandising.magicdatareader.configuration.exception.MagicRunTimeException;
 import com.kroger.merchandising.magicdatareader.service.KafkaClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -19,7 +21,13 @@ public class CustomKafkaItemWriter implements ItemWriter<StorePriceUpdateEvent> 
 
     @Override
     public void write(Chunk<? extends StorePriceUpdateEvent> chunk) {
-        chunk.forEach(handlingConsumerWithPotentialException(event-> kafkaClientService.sendKafkaEvent(event.getUpc(), event.getDivision(), event)));
+        chunk.forEach(event-> {
+            try {
+                kafkaClientService.sendKafkaEvent(event.getUpc(), event.getDivision(), event);
+            } catch (MagicDataReaderException e) {
+                throw new MagicRunTimeException(e.getMessage());
+            }
+        });
     }
 
 

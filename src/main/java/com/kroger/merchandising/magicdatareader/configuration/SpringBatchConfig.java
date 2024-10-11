@@ -1,7 +1,7 @@
 package com.kroger.merchandising.magicdatareader.configuration;
 
 import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
-import com.kroger.merchandising.magicdatareader.batch.listener.CustomSkipListener;
+import com.kroger.merchandising.magicdatareader.batch.listener.CustomItemWriterListener;
 import com.kroger.merchandising.magicdatareader.batch.policy.CustomSkipPolicy;
 import com.kroger.merchandising.magicdatareader.batch.processor.DataItemProcessor;
 import com.kroger.merchandising.magicdatareader.batch.reader.DataItemReader;
@@ -15,7 +15,6 @@ import com.kroger.merchandising.magicdatareader.batch.listener.CustomStepExecuti
 import com.kroger.merchandising.magicdatareader.service.FailedEventPersistenceService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.batch.core.Job;
-import org.springframework.batch.core.SkipListener;
 import org.springframework.batch.core.Step;
 import org.springframework.batch.core.configuration.annotation.StepScope;
 import org.springframework.batch.core.job.builder.JobBuilder;
@@ -43,15 +42,9 @@ public class SpringBatchConfig {
     @Value("${spring.batch.chunk-size}")
     private int chunkSize;
 
-
     @Bean
     public SkipPolicy skipPolicy() {
         return new CustomSkipPolicy();
-    }
-
-    @Bean
-    public SkipListener<StorePriceUpdateEvent,Throwable> skipListener() {
-        return new CustomSkipListener<>() ;
     }
 
     @Bean(name = "simpleAsyncTaskExecutor")
@@ -60,7 +53,6 @@ public class SpringBatchConfig {
                 simpleAsyncTaskExecutor.setConcurrencyLimit(5);
                 return simpleAsyncTaskExecutor;
     }
-
 
     @Bean(name = "insertIntoDbFromFileJob")
     public Job insertIntoDbFromFileJob(Step stepPublisher) {
@@ -78,9 +70,9 @@ public class SpringBatchConfig {
                 .writer(kafkaItemWriter)
                 .listener(new CustomChunkListener())
                 .listener(new CustomStepExecutionListener())
-                .listener(customItemProcesorListener())
                 .listener(customReadListener())
-//                .listener(skipListener())
+                .listener(customItemProcesorListener())
+                .listener(customItemWriterListener())
                 .faultTolerant()
                 .skipPolicy(skipPolicy())
                 .taskExecutor(taskExecutor())
@@ -98,6 +90,12 @@ public class SpringBatchConfig {
     @StepScope
     public CustomItemProcesorListener<StorePriceUpdateEvent, Throwable> customItemProcesorListener() {
         return new CustomItemProcesorListener<>(failedEventPersistenceService);
+    }
+
+    @Bean
+    @StepScope
+    public CustomItemWriterListener customItemWriterListener() {
+        return new CustomItemWriterListener(failedEventPersistenceService);
     }
 
 
