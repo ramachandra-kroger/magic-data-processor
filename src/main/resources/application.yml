@@ -8,30 +8,31 @@ spring:
   batch:
     jdbc:
       initialize-schema: never
+      table-prefix: store_price.BATCH_
     chunk-size: ${spring-batch-chunk-size}
     job:
       enabled: false
   application:
     name: magic-data-processor
   datasource:
-    url: ${yugabyte-pgsql-prcdlv-db-url}
-    username: ${yugabyte-pgsql-prcdlv-db-username}
-    password: ${yugabyte-pgsql-prcdlv-db-password}
-    driver-class-name: org.postgresql.Driver
+    url: ${azsql-magic-db-url}
+    username: ${azsql-magic-db-username}
+    password: ${azsql-magic-db-password}
+    driver-class-name: com.microsoft.sqlserver.jdbc.SQLServerDriver
     hikari:
-      maximum-pool-size: ${yugabyte-pgsql-prcdlv-db-pool-size}
-      connectionTimeout: ${yugabyte-pgsql-prcdlv-db-connection-timeout}
-      minimumIdle: ${yugabyte-pgsql-prcdlv-db-minimum-idle}
-      idleTimeout: ${yugabyte-pgsql-prcdlv-db-idle-timeout}
-      maxLifetime: ${yugabyte-pgsql-prcdlv-db-max-lifetime}
-      schema: ${yugabyte-pgsql-prcdlv-db-schema}
+      maximum-pool-size: ${azsql-magic-db-pool-size}
+      connectionTimeout: ${azsql-magic-db-connection-timeout}
+      minimumIdle: ${azsql-magic-db-minimum-idle}
+      idleTimeout: ${azsql-magic-db-idle-timeout}
+      maxLifetime: ${azsql-magic-db-max-lifetime}
+      schema: ${azsql-magic-db-schema}
   jpa:
     hibernate:
       ddl-auto: none
     show-sql: false
     properties:
-      hibernate.hibernate.default_schema: store_price_delivery
-    database: postgresql
+      hibernate.hibernate.default_schema: ${azsql-magic-db-schema}
+    database: sql_server
   kafka:
     bootstrap-servers: ${kafka-bootstrap-servers}
     schema-registry-url: ${kafka-schema-registry-url}
@@ -55,5 +56,5 @@ spring:
       enable-idempotence: ${kafka-enable-idempotence}
 app:
   target-topic: merchandising-price
-  input: ${magic-data-file}
+  magic.file-input: /Users/dou2267/development/magic-data-processor/src/main/resources/data/magic-data.txt
 
