@@ -70,7 +70,6 @@ public class SpringBatchConfig {
                 .reader(dataItemReader)
                 .processor(dataItemProcessor)
                 .writer(kafkaItemWriter)
-//                .listener(new CustomChunkListener())
                 .listener(new CustomStepExecutionListener())
                 .listener(customReadListener())
                 .listener(customItemProcesorListener())

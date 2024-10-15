@@ -11,7 +11,7 @@ public class CustomStepExecutionListener implements StepExecutionListener {
     @Override
     public ExitStatus afterStep(StepExecution stepExecution) {
         if (stepExecution.getReadCount() > 0){
-            log.info("Total records processed: {}", stepExecution.getReadCount());
+            log.info("Total amount of records published: {}", stepExecution.getReadCount());
             return stepExecution.getExitStatus();
         }
         else return ExitStatus.FAILED;

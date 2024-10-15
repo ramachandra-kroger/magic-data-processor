@@ -1,8 +1,6 @@
 package com.kroger.merchandising.magicdatareader.service.impl;
 
 import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
-import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDataReaderException;
-import com.kroger.merchandising.magicdatareader.configuration.exception.MagicRunTimeException;
 import com.kroger.merchandising.magicdatareader.service.KafkaClientService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -29,19 +27,13 @@ public class KafkaClientServiceImpl implements KafkaClientService {
     @Override
     public void sendKafkaEvent(String itemUpc, String division, StorePriceUpdateEvent eventMessage) {
         ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(targetTopic, itemUpc, eventMessage);
-//        try {
             CompletableFuture<SendResult<String, SpecificRecord>> future = kafkaTemplate.send(producerRecord);
             future.whenComplete((result, ex) -> {
                 if (!ObjectUtils.isEmpty(ex)) {
                     log.error("Error while publishing message: {}, Exception Message: {}", eventMessage, ex.getMessage());
-//                    throw new MagicRunTimeException("Error while sending event: "+ ex.getMessage());
                 }else {
                     log.info("Successfully published message: {}", eventMessage);
                 }
             });
-//        } catch (Exception ex) {
-//            log.error("Error while sending event to DESP: {}", ex.getMessage());
-//            throw new Exception("Error while publishing event: " + ex.getMessage(), ex);
-//        }
     }
 }

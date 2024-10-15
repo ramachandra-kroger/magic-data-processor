@@ -8,7 +8,6 @@ import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Service;
-import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -21,7 +20,6 @@ public class FailedEventPersistenceServiceImpl implements FailedEventPersistence
     @Qualifier(value = "magicJdbcTemplate")
     private final JdbcTemplate jdbcTemplate;
 
-//    @Transactional
     @Override
     public void saveAll(List<StorePriceFailedEvent> failedEvents) {
         String sql = "INSERT INTO store_price.store_price_events " +
