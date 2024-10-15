@@ -1,10 +1,8 @@
-package com.kroger.merchandising.magicdatareader.entity;
+package com.kroger.merchandising.magicdatareader.domain;
 
 import jakarta.persistence.Basic;
 import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
 import jakarta.persistence.Id;
-import jakarta.persistence.Table;
 import jakarta.validation.constraints.NotNull;
 import jakarta.validation.constraints.Size;
 import lombok.AllArgsConstructor;
@@ -16,8 +14,6 @@ import java.io.Serializable;
 import java.time.LocalDateTime;
 import java.util.UUID;
 
-@Entity
-@Table(name = "store_price_events", schema = "store_price")
 @Data
 @NoArgsConstructor
 @AllArgsConstructor

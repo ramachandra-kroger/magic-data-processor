@@ -1,8 +1,9 @@
 package com.kroger.merchandising.magicdatareader.service.impl;
 
 
-import com.kroger.merchandising.magicdatareader.entity.StorePriceFailedEvent;
+import com.kroger.merchandising.magicdatareader.domain.StorePriceFailedEvent;
 import lombok.RequiredArgsConstructor;
+import lombok.extern.slf4j.Slf4j;
 import org.springframework.jdbc.core.BatchPreparedStatementSetter;
 
 import java.sql.PreparedStatement;
@@ -11,6 +12,7 @@ import java.sql.Timestamp;
 import java.time.LocalDateTime;
 import java.util.List;
 
+@Slf4j
 @RequiredArgsConstructor
 public class PersistFailedEventsPreparedStatementSetter implements BatchPreparedStatementSetter {
 
@@ -26,6 +28,7 @@ public class PersistFailedEventsPreparedStatementSetter implements BatchPrepared
         ps.setBoolean(4, false);
         ps.setTimestamp(5, Timestamp.valueOf(LocalDateTime.now()));
         ps.setObject(6, storePriceFailedEvent.getEventId());
+
     }
 
     @Override

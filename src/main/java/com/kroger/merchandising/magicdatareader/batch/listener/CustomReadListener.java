@@ -24,6 +24,6 @@ public class CustomReadListener implements ItemReadListener<DataItem> {
             log.error("Error while parsing magic-data from file: {}", ex.getMessage(), ex);
             failedEventPersistenceService.saveBadFileText(flatFileParseException.getInput(), "999", stepExecution.getJobExecutionId());
         }
-        log.error("Error while parsing magic-data from file: {}, not able to read file source", ex.getMessage(), ex);
+//        log.error("Error while parsing magic-data from file: {}, not able to read file source", ex.getMessage(), ex);
     }
 }

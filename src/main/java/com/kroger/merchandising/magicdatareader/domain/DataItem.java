@@ -8,11 +8,13 @@ import lombok.Builder;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.io.Serializable;
+
 @Data
 @Builder
 @NoArgsConstructor
 @AllArgsConstructor
-public class DataItem {
+public class DataItem implements Serializable {
     @NotBlank
     @Size(min = 5, max = 5)
     private String locationNumber;

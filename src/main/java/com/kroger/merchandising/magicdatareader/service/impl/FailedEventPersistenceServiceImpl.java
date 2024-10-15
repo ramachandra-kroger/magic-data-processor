@@ -1,12 +1,14 @@
 package com.kroger.merchandising.magicdatareader.service.impl;
 
-import com.kroger.merchandising.magicdatareader.entity.StorePriceFailedEvent;
+import com.kroger.merchandising.magicdatareader.domain.StorePriceFailedEvent;
 import com.kroger.merchandising.magicdatareader.service.FailedEventPersistenceService;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.jdbc.core.JdbcTemplate;
 import org.springframework.jdbc.core.PreparedStatementSetter;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.sql.Timestamp;
 import java.time.LocalDateTime;
@@ -16,9 +18,10 @@ import java.util.List;
 @Service
 @RequiredArgsConstructor
 public class FailedEventPersistenceServiceImpl implements FailedEventPersistenceService {
-
+    @Qualifier(value = "magicJdbcTemplate")
     private final JdbcTemplate jdbcTemplate;
 
+//    @Transactional
     @Override
     public void saveAll(List<StorePriceFailedEvent> failedEvents) {
         String sql = "INSERT INTO store_price.store_price_events " +
@@ -26,7 +29,9 @@ public class FailedEventPersistenceServiceImpl implements FailedEventPersistence
                 "(?, ?, ?, ?, ?, ?)";
 
         try {
+            log.info("Inserting before query {}", sql);
             jdbcTemplate.batchUpdate(sql, new PersistFailedEventsPreparedStatementSetter(failedEvents));
+            log.info("Inserted after query {}", sql);
         } catch (Exception ex) {
             log.error("Error while inserting failed events into store_price_events table: {}", ex.getMessage());
         }
@@ -44,7 +49,7 @@ public class FailedEventPersistenceServiceImpl implements FailedEventPersistence
         try {
             jdbcTemplate.update(sql, preparedStatementSetter);
         } catch (Exception ex) {
-            log.error("Error while inserting magic_file_bad_recod into store_price table: {}", ex.getMessage());
+            log.error("Error while inserting magic_file_bad_record into store_price table: {}", ex.getMessage());
         }
     }
 

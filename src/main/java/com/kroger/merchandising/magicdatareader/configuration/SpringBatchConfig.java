@@ -1,13 +1,11 @@
 package com.kroger.merchandising.magicdatareader.configuration;
 
 import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
-import com.kroger.merchandising.magicdatareader.batch.listener.CustomItemWriterListener;
 import com.kroger.merchandising.magicdatareader.batch.policy.CustomSkipPolicy;
 import com.kroger.merchandising.magicdatareader.batch.processor.DataItemProcessor;
 import com.kroger.merchandising.magicdatareader.batch.reader.DataItemReader;
 import com.kroger.merchandising.magicdatareader.batch.writer.CustomKafkaItemWriter;
 import com.kroger.merchandising.magicdatareader.domain.DataItem;
-import com.kroger.merchandising.magicdatareader.batch.listener.CustomChunkListener;
 import com.kroger.merchandising.magicdatareader.batch.listener.CustomItemProcesorListener;
 import com.kroger.merchandising.magicdatareader.batch.listener.CustomJobListener;
 import com.kroger.merchandising.magicdatareader.batch.listener.CustomReadListener;
@@ -21,11 +19,12 @@ import org.springframework.batch.core.job.builder.JobBuilder;
 import org.springframework.batch.core.repository.JobRepository;
 import org.springframework.batch.core.step.builder.StepBuilder;
 import org.springframework.batch.core.step.skip.SkipPolicy;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
-import org.springframework.core.task.SimpleAsyncTaskExecutor;
 import org.springframework.core.task.TaskExecutor;
+import org.springframework.scheduling.concurrent.ThreadPoolTaskExecutor;
 import org.springframework.transaction.PlatformTransactionManager;
 
 
@@ -49,9 +48,12 @@ public class SpringBatchConfig {
 
     @Bean(name = "simpleAsyncTaskExecutor")
     public TaskExecutor taskExecutor() {
-        SimpleAsyncTaskExecutor simpleAsyncTaskExecutor =  new SimpleAsyncTaskExecutor("spring_batch");
-                simpleAsyncTaskExecutor.setConcurrencyLimit(5);
-                return simpleAsyncTaskExecutor;
+        ThreadPoolTaskExecutor taskExecutor = new ThreadPoolTaskExecutor();
+        taskExecutor.setCorePoolSize(4); // Set the number of threads to be used for parallel processing
+        taskExecutor.setMaxPoolSize(8); // Set the maximum number of threads
+        taskExecutor.setThreadNamePrefix("batch-thread-");
+        taskExecutor.initialize();
+        return taskExecutor;
     }
 
     @Bean(name = "insertIntoDbFromFileJob")
@@ -62,17 +64,16 @@ public class SpringBatchConfig {
     }
 
     @Bean
-    public Step stepPublisher(JobRepository jobRepository, PlatformTransactionManager platformTransactionManager){
+    public Step stepPublisher(JobRepository jobRepository, @Qualifier(value = "magicTransactionManager") PlatformTransactionManager transactionManager){
         return new StepBuilder("magicDataPublisher", jobRepository)
-                .<DataItem, StorePriceUpdateEvent>chunk(chunkSize, platformTransactionManager)
+                .<DataItem, StorePriceUpdateEvent>chunk(chunkSize, transactionManager)
                 .reader(dataItemReader)
                 .processor(dataItemProcessor)
                 .writer(kafkaItemWriter)
-                .listener(new CustomChunkListener())
+//                .listener(new CustomChunkListener())
                 .listener(new CustomStepExecutionListener())
                 .listener(customReadListener())
                 .listener(customItemProcesorListener())
-                .listener(customItemWriterListener())
                 .faultTolerant()
                 .skipPolicy(skipPolicy())
                 .taskExecutor(taskExecutor())
@@ -92,11 +93,6 @@ public class SpringBatchConfig {
         return new CustomItemProcesorListener<>(failedEventPersistenceService);
     }
 
-    @Bean
-    @StepScope
-    public CustomItemWriterListener customItemWriterListener() {
-        return new CustomItemWriterListener(failedEventPersistenceService);
-    }
 
 
 }

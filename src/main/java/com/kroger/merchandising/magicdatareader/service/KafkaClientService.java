@@ -4,5 +4,5 @@ import com.kroger.desp.events.merchandising.storeprice.StorePriceUpdateEvent;
 import com.kroger.merchandising.magicdatareader.configuration.exception.MagicDataReaderException;
 
 public interface KafkaClientService {
-    void sendKafkaEvent(String itemUpc, String division, StorePriceUpdateEvent eventMessage) throws MagicDataReaderException;
+    void sendKafkaEvent(String itemUpc, String division, StorePriceUpdateEvent eventMessage);
 }

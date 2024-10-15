@@ -27,21 +27,21 @@ public class KafkaClientServiceImpl implements KafkaClientService {
     private String targetTopic;
 
     @Override
-    public void sendKafkaEvent(String itemUpc, String division, StorePriceUpdateEvent eventMessage) throws MagicDataReaderException {
+    public void sendKafkaEvent(String itemUpc, String division, StorePriceUpdateEvent eventMessage) {
         ProducerRecord<String, SpecificRecord> producerRecord = new ProducerRecord<>(targetTopic, itemUpc, eventMessage);
-        try {
+//        try {
             CompletableFuture<SendResult<String, SpecificRecord>> future = kafkaTemplate.send(producerRecord);
             future.whenComplete((result, ex) -> {
                 if (!ObjectUtils.isEmpty(ex)) {
                     log.error("Error while publishing message: {}, Exception Message: {}", eventMessage, ex.getMessage());
-                    throw new MagicRunTimeException("Error while sending event: "+ ex.getMessage());
+//                    throw new MagicRunTimeException("Error while sending event: "+ ex.getMessage());
                 }else {
                     log.info("Successfully published message: {}", eventMessage);
                 }
             });
-        } catch (Exception ex) {
-            log.error("Error while sending event to DESP: {}", ex.getMessage());
-            throw new MagicDataReaderException("Error while publishing event: " + ex.getMessage(), ex);
-        }
+//        } catch (Exception ex) {
+//            log.error("Error while sending event to DESP: {}", ex.getMessage());
+//            throw new Exception("Error while publishing event: " + ex.getMessage(), ex);
+//        }
     }
 }

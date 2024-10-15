@@ -2,7 +2,7 @@ package com.kroger.merchandising.magicdatareader.service;
 
 
 
-import com.kroger.merchandising.magicdatareader.entity.StorePriceFailedEvent;
+import com.kroger.merchandising.magicdatareader.domain.StorePriceFailedEvent;
 
 import java.util.List;
 
